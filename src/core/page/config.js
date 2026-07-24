@@ -1,4 +1,4 @@
-export default function configs() {
+export default function configs(tplmh = null, tplsb = null) {
     const data = {
         mihomo: {
             name: 'Clash(mihomo)',
@@ -11,23 +11,21 @@ export default function configs() {
 - mixed(http+socks)端口: 7890，去广告 + 防DNS泄漏
 - **附加参数说明**  
 
-✔ UDP: 开启UDP代理
+**附加参数说明** 
 
-✔ ECH: 启用Encrypted Client Hello (ECH)
+- UDP: 开启UDP代理
+- ECH: 启用Encrypted Client Hello (ECH)
+- 链式代理: [启用链式代理](https://wiki.metacubex.one/config/proxies/dialer-proxy/) 必须填入两个以上的地址，第一个输入订阅将作为前置链式，第二个往后的不做为前置
+- 分应用代理: 排除CN应用(Android)
+- 分IPCIDR代理: 排除CN IP
+- 去广告dns: 去广告DNS
+- 获取流量信息：获取订阅的流量信息
+- 仅代理: 关闭tun，纯http/socks代理
+- 仅节点: 仅返回节点信息
+- 开启ipv6: 开启ipv6路由（对于不支持ipv6出站的节点将使网络不可达）
 
-✔ 链式代理: [启用链式代理](https://wiki.metacubex.one/config/proxies/dialer-proxy/) 必须填入两个以上的地址，第一个输入订阅将作为前置链式，第二个往后的不做为前置
-
-✔ 分应用代理: 排除CN应用(Android)
-
-✔ 分IPCIDR代理: 排除CN IP
-
-✔ 去广告dns: 去广告DNS
-
-✔ 仅代理: 关闭tun，纯http/socks代理
-
-✔ fallback: 获取原节点格式和流量信息
             `,
-            protocolList: ['udp', 'ech', 'relay', 'ep', 'ea', 'adgdns', 'tun', 'fallback', 'log'],
+            protocolList: ['udp', 'ech', 'relay', 'ep', 'ea', 'adgdns', 'heruser', 'tun', 'nodelist', 'ipv6', 'log'],
             protocolLabels: {
                 udp: 'UDP',
                 ech: 'ECH',
@@ -35,8 +33,10 @@ export default function configs() {
                 ep: '分应用代理',
                 ea: '分IPCIDR代理',
                 adgdns: '去广告DNS',
+                heruser: '获取流量信息',
                 tun: '仅代理',
-                fallback: 'fallback',
+                nodelist: '仅节点',
+                ipv6: '开启ipv6',
                 log: {
                     label: '日志等级',
                     levels: ['silent', 'error', 'warning', 'info', 'debug'],
@@ -46,77 +46,51 @@ export default function configs() {
                 通用: [
                     {
                         label: '默认(ACL4SSR_Online_Full)',
-                        value: '/ACL4SSR_Online_Full.yaml',
+                        value: 'https://raw.githubusercontent.com/Kwisma/cf-worker-mihomo/main/template/mihomo/ACL4SSR_Online_Full.yaml',
                     },
                     {
                         label: '默认(全分组)',
-                        value: '/default_full.yaml',
+                        value: 'https://raw.githubusercontent.com/Kwisma/cf-worker-mihomo/main/template/mihomo/default_full.yaml',
                     },
                     {
                         label: '默认(精简版)',
-                        value: '/default.yaml',
+                        value: 'https://raw.githubusercontent.com/Kwisma/cf-worker-mihomo/main/template/mihomo/default.yaml',
                     },
                 ],
                 'Lanlan13-14': [
                     {
                         label: 'configfull 全分组版 (秋风去广告)',
-                        value: '/Lanlan13-14/configfull.yaml',
+                        value: 'https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/configfull.yaml',
                     },
                     {
                         label: 'configfull_NoAd (无广告)',
-                        value: '/Lanlan13-14/configfull_NoAd.yaml',
+                        value: 'https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/configfull_NoAd.yaml',
                     },
                     {
                         label: 'configfull_NoAd_lite (精简)',
-                        value: '/Lanlan13-14/configfull_NoAd_lite.yaml',
+                        value: 'https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/configfull_NoAd_lite.yaml',
                     },
                     {
                         label: 'configfull_lite (精简版)',
-                        value: '/Lanlan13-14/configfull_lite.yaml',
+                        value: 'https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/configfull_lite.yaml',
                     },
                     {
                         label: 'configfull_beta',
-                        value: '/Lanlan13-14/configfull_beta.yaml',
-                    },
-                ],
-                zhuqq2020: [
-                    {
-                        label: 'ACL4SSR_Online_Full 重度',
-                        value: '/zhuqq2020/ACL4SSR_Online_Full.yaml',
-                    },
-                    {
-                        label: 'ACL4SSR_Online_Full_AdblockPlus',
-                        value: '/zhuqq2020/ACL4SSR_Online_Full_AdblockPlus.yaml',
-                    },
-                    {
-                        label: 'ACL4SSR_Online_Full_Tiktok',
-                        value: '/zhuqq2020/ACL4SSR_Online_Full_Tiktok.yaml',
-                    },
-                    {
-                        label: 'ACL4SSR_Online_Full_WithIcon',
-                        value: '/zhuqq2020/ACL4SSR_Online_Full_WithIcon.yaml',
-                    },
-                    {
-                        label: 'ACL4SSR_Online_Mini_MultiMode',
-                        value: '/zhuqq2020/ACL4SSR_Online_Mini_MultiMode.yaml',
-                    },
-                    {
-                        label: '极简分流规则',
-                        value: '/zhuqq2020/极简分流规则.yaml',
+                        value: 'https://raw.githubusercontent.com/Lanlan13-14/Rules/refs/heads/main/configfull_beta.yaml',
                     },
                 ],
                 'mihomo-party-org': [
                     {
                         label: '布丁狗的订阅转换',
-                        value: '/mihomo-party-org/布丁狗的订阅转换.yaml',
+                        value: 'https://raw.githubusercontent.com/mihomo-party-org/override-hub/refs/heads/main/yaml/布丁狗的订阅转换.yaml',
                     },
                     {
                         label: 'ACL4SSR_Online_Full',
-                        value: '/mihomo-party-org/ACL4SSR_Online_Full.yaml',
+                        value: 'https://raw.githubusercontent.com/mihomo-party-org/override-hub/refs/heads/main/yaml/ACL4SSR_Online_Full.yaml',
                     },
                     {
                         label: 'ACL4SSR_Online_Full_WithIcon',
-                        value: '/mihomo-party-org/ACL4SSR_Online_Full_WithIcon.yaml',
+                        value: 'https://raw.githubusercontent.com/mihomo-party-org/override-hub/refs/heads/main/yaml/ACL4SSR_Online_Full_WithIcon.yaml',
                     },
                 ],
             },
@@ -130,31 +104,42 @@ export default function configs() {
 - clash api 面板: http://127.0.0.1:9090 
 - singbox api 面板: http:// 127.0.0.1:9091
 - mixed(http+socks) 端口: 7890
-- **附加参数说明**  
 
-✔ UDP: 开启UDP代理
+**附加参数说明**  
 
-✔ ECH: 启用Encrypted Client Hello (ECH)
+- UDP: 开启UDP代理
+- ECH: 启用Encrypted Client Hello (ECH)
+- 链式代理: [启用链式代理](https://sing-box.sagernet.org/zh/configuration/shared/dial/) 必须填入两个以上的地址，第一个输入订阅将作为前置链式，第二个往后的不做为前置
+- UDP分段: 把大 UDP 包拆成多个小包发送
+- TLS分段: 拆分 TLS 握手数据
+- 分应用代理: 排除CN应用(Android)
+- 分IPCIDR代理: 排除CN IP
+- tailscale: [查看说明](https://sing-box.sagernet.org/zh/configuration/dns/server/tailscale/)
+- bridge:  [查看说明](https://sing-box.sagernet.org/zh/configuration/outbound/bridge/)
+- 去广告dns: 去广告DNS
+- 获取流量信息：获取订阅的流量信息
+- 仅代理: 关闭tun，纯http/socks代理
+- 仅节点: 仅返回节点信息
+- 开启ipv6: 开启ipv6路由（对于不支持ipv6出站的节点将使网络不可达）
 
-✔ 链式代理: [启用链式代理](https://sing-box.sagernet.org/zh/configuration/shared/dial/) 必须填入两个以上的地址，第一个输入订阅将作为前置链式，第二个往后的不做为前置
-
-✔ UDP分段: 把大 UDP 包拆成多个小包发送
-
-✔ TLS分段: 拆分 TLS 握手数据
-
-✔ 分应用代理: 排除CN应用(Android)
-
-✔ 分IPCIDR代理: 排除CN IP
-
-✔ tailscale: [查看说明](https://sing-box.sagernet.org/zh/configuration/dns/server/tailscale/)
-
-✔ 去广告dns: 去广告DNS
-
-✔ 仅代理: 关闭tun，纯http/socks代理
-
-✔ fallback: 获取原节点格式和流量信息
             `,
-            protocolList: ['udp', 'ech', 'relay', 'udp_frag', 'tls_frag', 'ep', 'ea', 'tailscale', 'adgdns', 'tun', 'fallback', 'log'],
+            protocolList: [
+                'udp',
+                'ech',
+                'relay',
+                'udp_frag',
+                'tls_frag',
+                'ep',
+                'ea',
+                'tailscale',
+                'bridge',
+                'adgdns',
+                'heruser',
+                'tun',
+                'nodelist',
+                'ipv6',
+                'log',
+            ],
             protocolLabels: {
                 udp: 'UDP',
                 ech: 'ECH',
@@ -164,9 +149,12 @@ export default function configs() {
                 ep: '分应用代理',
                 ea: '分IPCIDR',
                 tailscale: 'Tailscale',
+                bridge: 'bridge',
                 adgdns: '去广告DNS',
+                heruser: '获取流量信息',
                 tun: '仅代理',
-                fallback: 'fallback',
+                nodelist: '仅节点',
+                ipv6: '开启ipv6',
                 log: {
                     label: '日志等级',
                     levels: ['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'panic'],
@@ -176,15 +164,15 @@ export default function configs() {
                 通用: [
                     {
                         label: '默认(ACL4SSR_Online_Full)',
-                        value: '/ACL4SSR_Online_Full.yaml',
+                        value: 'https://raw.githubusercontent.com/Kwisma/cf-worker-mihomo/main/template/singbox/ACL4SSR_Online_Full.yaml',
                     },
                     {
                         label: '默认(全分组)',
-                        value: '/default_full.yaml',
+                        value: 'https://raw.githubusercontent.com/Kwisma/cf-worker-mihomo/main/template/singbox/default_full.yaml',
                     },
                     {
                         label: '默认(精简版)',
-                        value: '/default.yaml',
+                        value: 'https://raw.githubusercontent.com/Kwisma/cf-worker-mihomo/main/template/singbox/default.yaml',
                     },
                 ],
             },
@@ -198,5 +186,24 @@ export default function configs() {
             noTemplate: true,
         },
     };
+
+    if (tplmh) {
+        data.mihomo.templates = {
+            ['自定义']: tplmh.map((i) => ({
+                label: i.split('/').pop().split('?')[0],
+                value: i,
+            })),
+            ...data.mihomo.templates,
+        };
+    }
+    if (tplsb) {
+        data.singbox.templates = {
+            ['自定义']: tplsb.map((i) => ({
+                label: i.split('/').pop().split('?')[0],
+                value: i,
+            })),
+            ...data.singbox.templates,
+        };
+    }
     return JSON.stringify(data);
 }

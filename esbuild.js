@@ -1,18 +1,66 @@
-import esbuild from 'esbuild';
-const artifacts = [{ src: 'src/_worker.js', dest: 'dist/_worker.js' }];
+const { build } = require('esbuild');
+const { cp } = require('fs/promises');
+const fs = require('fs/promises');
+const path = require('path');
+const objectHasOwnPolyfill = require.resolve('core-js/actual/object/has-own');
+const replaceOpenApiIsNode = {
+    name: 'replace-open-api-is-node',
+    setup(build) {
+        build.onLoad(
+            {
+                filter: /open-api\.js$/,
+            },
+            async (args) => {
+                let contents = await fs.readFile(args.path, 'utf8');
 
-(async () => {
+                if (args.path.includes(path.join('src', 'core', 'Sub-Store', 'backend', 'src', 'vendor'))) {
+                    contents = contents.replace(/const\s+isNode\s*=\s*eval\(`typeof process !== "undefined"`\)\s*;/, 'const isNode = false;');
+                }
+
+                return {
+                    contents,
+                    loader: 'js',
+                };
+            },
+        );
+    },
+};
+!(async () => {
+    const artifacts = [{ src: 'src/worker.js', dest: 'dist/_worker.js' }];
     for (const artifact of artifacts) {
-        await esbuild.build({
-            entryPoints: [artifact.src], // 入口文件
-            bundle: true, // 启用打包
-            outfile: artifact.dest, // 输出文件
-            sourcemap: true, // 生成 Source Map
-            minify: true, // 压缩代码
-            target: ['es2020'], // 目标环境
-            format: 'esm', // 输出格式 CommonJS
-            platform: 'browser', // 目标平台为浏览器
+        await build({
+            entryPoints: [artifact.src],
+            bundle: true,
+            minify: true,
+            sourcemap: false,
+            platform: 'browser',
+            format: 'esm',
+            outfile: artifact.dest,
+            inject: [objectHasOwnPolyfill],
+            plugins: [replaceOpenApiIsNode],
         });
         console.log(`✔️ 打包完成: ${artifact.src} → ${artifact.dest}`);
     }
+    const verfacts = [{ src: 'src/vercel.js', dest: 'src/server.js' }];
+    for (const artifact of verfacts) {
+        await build({
+            entryPoints: [artifact.src],
+            bundle: true,
+            minify: true,
+            sourcemap: false,
+            platform: 'node',
+            format: 'cjs',
+            outfile: artifact.dest,
+            inject: [objectHasOwnPolyfill],
+            plugins: [replaceOpenApiIsNode],
+        });
+        console.log(`✔️ 打包完成: ${artifact.src} → ${artifact.dest}`);
+    }
+    const copyTasks = [
+        ['./template', './dist/template'],
+        ['./favicon.png', './dist/favicon.png'],
+        ['./icon', './dist/icon'],
+    ];
+
+    await Promise.all(copyTasks.map(([src, dest]) => cp(src, dest, { recursive: true })));
 })();
