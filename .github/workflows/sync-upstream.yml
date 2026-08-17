@@ -57,11 +57,21 @@ jobs:
               pushed=1
               echo "Merged upstream ${UPSTREAM_REPOSITORY}:${TARGET_BRANCH}." >> "$GITHUB_STEP_SUMMARY"
             else
-              echo "Upstream sync has conflicts and was left unchanged." >> "$GITHUB_STEP_SUMMARY"
-              echo "Conflicted files:" >> "$GITHUB_STEP_SUMMARY"
-              git diff --name-only --diff-filter=U | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
-              git merge --abort || true
-              exit 1
+              conflicted_files=$(git diff --name-only --diff-filter=U)
+              if [[ "$conflicted_files" == "package.json" ]]; then
+                git checkout --ours -- package.json
+                git add package.json
+                git commit --no-edit
+                git push origin "${TARGET_BRANCH}"
+                pushed=1
+                echo "Merged upstream and preserved the fork package version in package.json." >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "Upstream sync has conflicts and was left unchanged." >> "$GITHUB_STEP_SUMMARY"
+                echo "Conflicted files:" >> "$GITHUB_STEP_SUMMARY"
+                printf '%s\n' "$conflicted_files" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY" || true
+                git merge --abort || true
+                exit 1
+              fi
             fi
           fi
 
