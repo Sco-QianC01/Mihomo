@@ -3,6 +3,14 @@ const { cp } = require('fs/promises');
 const fs = require('fs/promises');
 const path = require('path');
 const objectHasOwnPolyfill = require.resolve('core-js/actual/object/has-own');
+const browserNodeBuiltins = [
+    'child_process',
+    'dgram',
+    'fs',
+    'net',
+    'stream/promises',
+    'tls',
+];
 const replaceOpenApiIsNode = {
     name: 'replace-open-api-is-node',
     setup(build) {
@@ -36,6 +44,7 @@ const replaceOpenApiIsNode = {
             platform: 'browser',
             format: 'esm',
             outfile: artifact.dest,
+            external: browserNodeBuiltins,
             inject: [objectHasOwnPolyfill],
             plugins: [replaceOpenApiIsNode],
         });
